@@ -1,0 +1,57 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/
+    container_name: customer-app
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+      - redis
+    networks:
+      - default
+
+  db:
+    image: mysql:8.0
+    container_name: customer-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - default:/var/lib/mysql
+    ports:
+      - "3316:3306"
+    networks:
+      - default
+
+  redis:
+    image: redis:alpine
+    container_name: customer-redis
+    networks:
+      - default
+
+  nginx:
+    image: nginx:alpine
+    container_name: customer-nginx
+    ports:
+      - "8008:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - default
+
+networks:
+  default:
+      name: costumer_network
+
+volumes:
+  default:
+      name: customer_data
