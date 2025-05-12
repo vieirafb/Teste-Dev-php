@@ -8,8 +8,11 @@ services:
     volumes:
       - .:/var/www/html
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+          condition: service_started
+
     networks:
       - default
 
@@ -28,6 +31,11 @@ services:
       - "3316:3306"
     networks:
       - default
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:alpine
