@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c491b8531eec05ba41a11d9276a5749",
+    "content-hash": "ca4c3f6ef034e2bc683e3c9de7ef6a53",
     "packages": [
         {
             "name": "brick/math",
@@ -377,6 +377,58 @@
                 }
             ],
             "time": "2024-02-05T11:56:58+00:00"
+        },
+        {
+            "name": "douglasresendemaciel/brazilian-documents-validator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/douglasresendemaciel/brazilian-documents-validator.git",
+                "reference": "f3eada5d3a7146fb7b3ae1b5534de088c59264e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/douglasresendemaciel/brazilian-documents-validator/zipball/f3eada5d3a7146fb7b3ae1b5534de088c59264e3",
+                "reference": "f3eada5d3a7146fb7b3ae1b5534de088c59264e3",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^5.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "laravel/framework": "^5.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "GenerateRandomDocument": "DouglasResende\\BrazilianDocumentsValidator\\Facade\\GenerateRandomDocument"
+                    },
+                    "providers": [
+                        "DouglasResende\\BrazilianDocumentsValidator\\BrazilianDocumentsProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DouglasResende\\BrazilianDocumentsValidator\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Douglas Resende Maciel",
+                    "email": "eu@douglasresende.com"
+                }
+            ],
+            "description": "Validator for LARAVEL to validate CPF, CNPJ and CNH",
+            "support": {
+                "issues": "https://github.com/douglasresendemaciel/brazilian-documents-validator/issues",
+                "source": "https://github.com/douglasresendemaciel/brazilian-documents-validator/tree/master"
+            },
+            "time": "2025-05-05T21:16:21+00:00"
         },
         {
             "name": "dragonmantank/cron-expression",
@@ -8122,7 +8174,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "douglasresendemaciel/brazilian-documents-validator": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
