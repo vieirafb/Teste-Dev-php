@@ -80,6 +80,10 @@ class CustomerController extends Controller
         Cache::put('lastZipCodeConsulted', $zipCode, now()->addMinutes(10));
 
         $resp = $this->customerRepository->create($request->all());
+
+        Cache::forget('customersListResult');
+        Cache::forget('customersListParams');
+
         return response()->json($resp, Response::HTTP_CREATED);
     }
 
@@ -103,12 +107,20 @@ class CustomerController extends Controller
         Cache::put('lastZipCodeConsulted', $zipCode, now()->addMinutes(10));
 
         $resp = $this->customerRepository->edit($id, $request->all());
+
+        Cache::forget('customersListResult');
+        Cache::forget('customersListParams');
+
         return response()->json($resp, Response::HTTP_OK);
     }
 
     public function destroy(string $id)
     {
         $this->customerRepository->delete($id);
+
+        Cache::forget('customersListResult');
+        Cache::forget('customersListParams');
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
