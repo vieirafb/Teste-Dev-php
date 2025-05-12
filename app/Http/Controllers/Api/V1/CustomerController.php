@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SaveCustomerRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,6 +22,12 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $params = $request->all();
+
+        $cachedParamns = Cache::get('customersListParams');
+
+        if ($cachedParamns === $request->getQueryString() && Cache::has('customersListResult')) {
+            return Cache::get('customersListResult');
+        }
 
         $query = DB::table('customers', 'c')
             ->select([
@@ -50,16 +57,27 @@ class CustomerController extends Controller
         if (isset($params['zipcode']))
             $query->where('a.zipcode', $params['zipcode']);
 
-        return $query->paginate($params['per_page'] ?? 10, ['*'], 'page', $params['page'] ?? 1);
+        $result = $query->paginate($params['per_page'] ?? 10, ['*'], 'page', $params['page'] ?? 1);
+        $inFiveMin = now()->addMinutes(5);
+
+        Cache::put('customersListResult', $result, $inFiveMin);
+        Cache::put('customersListParams', $request->getQueryString(), $inFiveMin);
+
+        return $result;
     }
 
     public function store(SaveCustomerRequest $request): JsonResponse
     {
-        if (!$this->zipCodeFinder->execute($request->address['zipcode']))
+        $zipCode = $request->address['zipcode'];
+
+        if (Cache::get('lastZipCodeConsulted') !== $zipCode && !$this->zipCodeFinder->execute($zipCode)) {
             return response()->json(
                 ['message' => "The zip code given does not exist!"],
                 Response::HTTP_BAD_REQUEST
             );
+        }
+
+        Cache::put('lastZipCodeConsulted', $zipCode, now()->addMinutes(10));
 
         $resp = $this->customerRepository->create($request->all());
         return response()->json($resp, Response::HTTP_CREATED);
@@ -73,11 +91,16 @@ class CustomerController extends Controller
 
     public function update(SaveCustomerRequest $request, int $id)
     {
-        if (!$this->zipCodeFinder->execute($request->address['zipcode']))
+        $zipCode = $request->address['zipcode'];
+
+        if (Cache::get('lastZipCodeConsulted') !== $zipCode && !$this->zipCodeFinder->execute($zipCode)) {
             return response()->json(
                 ['message' => "The zip code given does not exist!"],
                 Response::HTTP_BAD_REQUEST
             );
+        }
+
+        Cache::put('lastZipCodeConsulted', $zipCode, now()->addMinutes(10));
 
         $resp = $this->customerRepository->edit($id, $request->all());
         return response()->json($resp, Response::HTTP_OK);

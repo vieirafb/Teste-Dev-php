@@ -11,7 +11,9 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     gnupg \
     ca-certificates \
-    && docker-php-ext-install pdo_mysql mbstring zip pcntl
+    && pecl install redis \
+    && docker-php-ext-install pdo_mysql mbstring zip pcntl \
+    && docker-php-ext-enable redis
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: docker/
+      dockerfile: docker/Dockerfile
     container_name: customer-app
     working_dir: /var/www/html
     volumes:
